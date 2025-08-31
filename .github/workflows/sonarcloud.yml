@@ -30,7 +30,7 @@ jobs:
         uses: SonarSource/sonarcloud-github-action@master
         with:
           args: >
-            -Dsonar.organization=apetrazz-ops
+            -Dsonar.organization=apetrazz-ops_sonar-demo
             -Dsonar.projectKey=sonar-demo
             -Dsonar.projectName=sonar-demo
             -Dsonar.exclusions=**/bin/**,**/obj/**
