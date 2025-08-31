@@ -1,0 +1,39 @@
+name: SonarCloud
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches: [ main ]
+
+jobs:
+  build:
+    name: Build and analyze
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore
+        run: dotnet restore SonarDemo.csproj
+
+      - name: Build
+        run: dotnet build SonarDemo.csproj --no-restore --configuration Release
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        with:
+          args: >
+            -Dsonar.organization=<il-tuo-nome-organizzazione>
+            -Dsonar.projectKey=<il-tuo-projectKey>
+            -Dsonar.projectName=SonarDemo
+            -Dsonar.exclusions=**/bin/**,**/obj/**
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
