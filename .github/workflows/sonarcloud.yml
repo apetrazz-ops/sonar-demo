@@ -30,9 +30,9 @@ jobs:
         uses: SonarSource/sonarcloud-github-action@master
         with:
           args: >
-            -Dsonar.organization=<il-tuo-nome-organizzazione>
-            -Dsonar.projectKey=<il-tuo-projectKey>
-            -Dsonar.projectName=SonarDemo
+            -Dsonar.organization=apetrazz-ops
+            -Dsonar.projectKey=sonar-demo
+            -Dsonar.projectName=sonar-demo
             -Dsonar.exclusions=**/bin/**,**/obj/**
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
