@@ -31,7 +31,7 @@ jobs:
         with:
           args: >
             -Dsonar.organization=apetrazzkey-ops
-            -Dsonar.projectKey=sonar-demo
+            -Dsonar.projectKey=apetrazz-ops_sonar-demo
             -Dsonar.projectName=sonar-demo
             -Dsonar.exclusions=**/bin/**,**/obj/**
         env:
