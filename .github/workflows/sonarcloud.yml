@@ -1,39 +1,51 @@
-name: SonarCloud
+name: Build and Analyze with SonarCloud
+
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
   pull_request:
     types: [opened, synchronize, reopened]
-    branches: [ main ]
 
 jobs:
   build:
-    name: Build and analyze
+    name: Build and Analyze
     runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
+    steps:
+      # 1. Checkout del codice
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Importante per SonarCloud
+
+      # 2. Setup di .NET
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 8.0.x
+          dotnet-version: '8.0.x'
 
-      - name: Restore
-        run: dotnet restore SonarDemo.csproj
+      # 3. Restore dipendenze
+      - name: Restore dependencies
+        run: dotnet restore SonarDemo/SonarDemo.csproj
 
+      # 4. Build progetto
       - name: Build
-        run: dotnet build SonarDemo.csproj --no-restore --configuration Release
+        run: dotnet build SonarDemo/SonarDemo.csproj --no-incremental --configuration Release
 
+      # 5. Eseguire i test (opzionale ma consigliato)
+      - name: Run Tests
+        run: dotnet test SonarDemo/SonarDemo.csproj --logger "trx"
+
+      # 6. Analisi con SonarCloud
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # necessario per PR decoration
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: >
             -Dsonar.organization=apetrazzkey-ops
             -Dsonar.projectKey=apetrazz-ops_sonar-demo
             -Dsonar.projectName=sonar-demo
-            -Dsonar.exclusions=**/bin/**,**/obj/**
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            -Dsonar.dotnet.excludeTestProjects=true
